@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eb61f35342647c3842c330ecf4973fa, type: 3}
+  m_Name: ColoredBoxesConfig
+  m_EditorClassIdentifier: 
+  <BoxRed>k__BackingField: {fileID: 2500064427392484793, guid: 0119ecfab19ef3145819ea7bd1b3fefe, type: 3}
+  <BoxLightRed>k__BackingField: {fileID: 353775514234147754, guid: 2b1f3ed4ce52605429665e0c55573df8, type: 3}
+  <BoxOrange>k__BackingField: {fileID: 694811123815632669, guid: 4f3812d74af14774087de6c37020c16c, type: 3}
+  <BoxYellow>k__BackingField: {fileID: 3481751713163783986, guid: dfc55d22adc5b2746a02f7b13c469f79, type: 3}
+  <BoxGreen>k__BackingField: {fileID: 9084853026905808585, guid: 68a9beab39217834ab98a4623b1c88cd, type: 3}
+  <BoxBlue>k__BackingField: {fileID: 2430621526238601318, guid: f7136f41b62d48b4299cbd253e05965e, type: 3}
+  <BoxDarkBlue>k__BackingField: {fileID: 5983007914339020233, guid: 85f81d84ea392064699f089326bf072c, type: 3}
+  <BoxPurple>k__BackingField: {fileID: 7153539678601049101, guid: c331975fb9423604e8cab02edd47ffdd, type: 3}
+  <BoxGray>k__BackingField: {fileID: 4268801052955746867, guid: 189e5e63833c926459f0b2c0ecc71e36, type: 3}
+  <BoxBrown>k__BackingField: {fileID: 7317765133288263567, guid: d3914105246cb3b4da783f59a1b6ce5e, type: 3}
+  <BoxBlack>k__BackingField: {fileID: 1971282680319850063, guid: c9c9eb6f5cae4e4408a51ac0e2b6ecc5, type: 3}
+  <BoxDarkPurple>k__BackingField: {fileID: 6034776223929037617, guid: eb1f8f0dfb7b21342a8413fb52123239, type: 3}
+  <BoxPink>k__BackingField: {fileID: 8372279620816294266, guid: 357565085164c1148a212fbf87bf28b8, type: 3}
+  <BoxTurquoise>k__BackingField: {fileID: 1212986138832676111, guid: 755e6874170943040bdc96370de8f9f1, type: 3}
+  <BoxLightGreen>k__BackingField: {fileID: 5260533625043463876, guid: 207589058c7743e479717698049eed3f, type: 3}
+  <BoxLilac>k__BackingField: {fileID: 4301638466826988764, guid: 7728838b5d80074408609539f9517faf, type: 3}
+  <BoxLightLilac>k__BackingField: {fileID: 2767934566401805465, guid: 958b22ff040c1ea4c94baac80cf2ba3a, type: 3}
+  <BoxBrownRed>k__BackingField: {fileID: 1878785393286899840, guid: b38c40acb80a0b04ba6dd5a1c58ee477, type: 3}
+  <BoxLightYellow>k__BackingField: {fileID: 3285565809043949053, guid: 5447bb061e15a044182a5323412c9659, type: 3}
+  <BoxLightPink>k__BackingField: {fileID: 3209120303532012627, guid: 254fd33450eafa3458ab26c7a8568ddf, type: 3}
