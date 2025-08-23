@@ -541,8 +541,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fafed12bb7b548bb9bf322a348dbb965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <RectTransform>k__BackingField: {fileID: 6092632920562952748}
   _coloredBoxesPool: {fileID: 5125850296202229090}
+  <RectTransform>k__BackingField: {fileID: 6092632920562952748}
 --- !u!1 &6334321174202862570
 GameObject:
   m_ObjectHideFlags: 0
@@ -789,11 +789,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f74bcb9773cb47aba7fab1c279efeff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _coloredBoxesPool: {fileID: 5125850296202229090}
   <RectTransform>k__BackingField: {fileID: 2392996769891265508}
   _draggableObjects: []
-  _maxHorizontalOffset: 0.5
-  _cubeHeight: 1
-  _screenTopY: 0
+  _percentOffsetBox: 0.5
 --- !u!1 &9113858082617314118
 GameObject:
   m_ObjectHideFlags: 0

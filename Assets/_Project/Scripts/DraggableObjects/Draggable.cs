@@ -69,8 +69,10 @@ namespace _Project.Scripts.DraggableObjects
 
         private void OnDestroy()
         {
-            OnPointerDowned -= _draggableManager.OnPointerDowned;
-            OnEndedDrag -= _draggableManager.OnEndedDrag;
+            OnPointerDowned = null;
+            OnEndedDrag = null;
+            OnPointerDowned -= _draggableManager?.OnPointerDowned;
+            OnEndedDrag -= _draggableManager?.OnEndedDrag;
         }
     }
 }

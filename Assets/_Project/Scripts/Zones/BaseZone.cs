@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using _Project.Scripts.DraggableObjects;
+using _Project.Scripts.ObjectPools;
 using UnityEngine;
 
 namespace _Project.Scripts.Zones
 {
-    public class BaseZone : MonoBehaviour
+    public abstract class BaseZone : MonoBehaviour
     {
+        [SerializeField] protected ColoredBoxesPool _coloredBoxesPool;
         [field: SerializeField] public RectTransform RectTransform { get; private set; }
 
         private void OnValidate()
@@ -14,9 +16,7 @@ namespace _Project.Scripts.Zones
             RectTransform ??= GetComponent<RectTransform>();
         }
 
-        public virtual void AddDraggableToZone(Draggable draggable)
-        {
-            
-        }
+        public abstract void AddDraggableToZone(Draggable draggable);
+        public virtual void RemoveDraggableFromZone(Draggable draggable) { }
     }
 }

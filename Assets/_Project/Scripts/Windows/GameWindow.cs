@@ -38,8 +38,11 @@ namespace _Project.Scripts.Windows
                 var screenPoint = RectTransformUtility.WorldToScreenPoint(null, draggable.RectTransform.position);
                 if (RectTransformUtility.RectangleContainsScreenPoint(zone.RectTransform, screenPoint))
                 {
-                    if(zone.RectTransform)
-                        zone.AddDraggableToZone(draggable);
+                    zone.AddDraggableToZone(draggable);
+                }
+                else
+                {
+                    zone.RemoveDraggableFromZone(draggable);
                 }
             }
         }
