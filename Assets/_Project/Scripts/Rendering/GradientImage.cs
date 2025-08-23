@@ -4,23 +4,41 @@ using UnityEngine.UI;
 namespace _Project.Scripts.Rendering
 {
     [RequireComponent(typeof(Graphic))]
-    public class Gradient : BaseMeshEffect
+    public class GradientImage : BaseMeshEffect
     {
-        public Color _topColor = Color.white;
-        public Color _bottomColor = Color.black;
+        [SerializeField] private Color _topColor = Color.white;
+        [SerializeField] private Color _bottomColor = Color.black;
+
+        public Color TopColor
+        {
+            get => _topColor;
+            set { _topColor = value; Refresh(); }
+        }
+
+        public Color BottomColor
+        {
+            get => _bottomColor;
+            set { _bottomColor = value; Refresh(); }
+        }
+
+        private void Refresh()
+        {
+            graphic.SetVerticesDirty();
+        }
 
         public override void ModifyMesh(VertexHelper vh)
         {
             if (!IsActive() || vh.currentVertCount == 0) return;
 
+            var rect = ((RectTransform)transform).rect;
             UIVertex vert = new UIVertex();
             int count = vh.currentVertCount;
 
             for (int i = 0; i < count; i++)
             {
                 vh.PopulateUIVertex(ref vert, i);
-                float lerp = vert.position.y / ((RectTransform)transform).rect.height;
-                vert.color = Color.Lerp(_bottomColor, _topColor, lerp + 0.5f);
+                float lerp = Mathf.InverseLerp(rect.yMin, rect.yMax, vert.position.y);
+                vert.color = Color.Lerp(_bottomColor, _topColor, lerp);
                 vh.SetUIVertex(vert, i);
             }
         }

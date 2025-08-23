@@ -1,4 +1,6 @@
 using _Project.Scripts._GlobalLogic;
+using _Project.Scripts.Factories;
+using _Project.Scripts.Managers;
 using _Project.Scripts.SO;
 using UnityEngine;
 using VContainer;
@@ -22,7 +24,19 @@ namespace _Project.Scripts._VContainer
             
             builder.RegisterInstance(_windowsManager).AsSelf().As<IInitializable>();
 
+            RegisterServices(builder);
+            RegisterFactories(builder);
             RegisterSO(builder);
+        }
+
+        private void RegisterServices(IContainerBuilder builder)
+        {
+            builder.Register<DraggableManager>(Lifetime.Singleton).AsSelf();
+        }
+        
+        private void RegisterFactories(IContainerBuilder builder)
+        {
+            builder.Register<ColoredBoxesFactory>(Lifetime.Singleton).AsSelf();
         }
         
         private void RegisterSO(IContainerBuilder builder)

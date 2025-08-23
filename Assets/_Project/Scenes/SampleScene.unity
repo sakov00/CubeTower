@@ -350,7 +350,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _windowsManager: {fileID: 23621839}
-  _coloredBoxesConfig: {fileID: 11400000, guid: 4d0840aa721858c41b94851077dbb34f, type: 2}
+  _coloredBoxesConfig: {fileID: 11400000, guid: 99c2570ad4b6d5d4fac9682726b300e1, type: 2}
   _windowsConfig: {fileID: 11400000, guid: 66f554290fdbf514f988e1062be78178, type: 2}
 --- !u!4 &219273417
 Transform:

@@ -27,9 +27,7 @@ namespace _Project.Scripts.DraggableObjects
                 if (Mathf.Abs(eventData.delta.y) > Mathf.Abs(eventData.delta.x))
                 {
                     _lockScroll = true;
-        
-                        PassThroughClick(eventData);
-                    
+                    PassThroughClick(eventData);
                 }
                 _directionChosen = true;
             }
@@ -64,7 +62,8 @@ namespace _Project.Scripts.DraggableObjects
         {
             List<RaycastResult> results = new List<RaycastResult>();
             GlobalObjects.EventSystem.RaycastAll(eventData, results);
-            _currentChildObject = results.LastOrDefault().gameObject;
+            _currentChildObject = results[1].gameObject;
+            ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.pointerDownHandler);
             ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.beginDragHandler);
         }
     }
