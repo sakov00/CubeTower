@@ -34,7 +34,7 @@ namespace _Project.Scripts.Zones
             }
             else
             {
-                _draggablePool.Return(draggable);
+                DraggablePool.Return(draggable);
                 ActionNotifier.PublishAction(GameConstants.LocalizationKeys.BoxMissed);
             }
         }
@@ -56,6 +56,7 @@ namespace _Project.Scripts.Zones
             rectTransform.SetParent(transform);
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
         }
 
         private void SetPosition(Draggable draggable)
@@ -76,7 +77,7 @@ namespace _Project.Scripts.Zones
                 var zoneHeight = RectTransform.rect.height;
                 if (newY > zoneHeight && draggable is ColoredBox coloredBox)
                 {
-                    _draggablePool.Return(coloredBox);
+                    DraggablePool.Return(coloredBox);
                     ActionNotifier.PublishAction(GameConstants.LocalizationKeys.MaximumAltitudeExceeded);
                     return;
                 }

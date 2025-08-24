@@ -1,18 +1,19 @@
-using _Project.Scripts.Localization;
+using _Project.Scripts._VContainer;
+using _Project.Scripts.Managers;
 using _Project.Scripts.Windows;
 using UnityEngine;
 using VContainer;
-using VContainer.Unity;
 
 namespace _Project.Scripts._GlobalLogic
 {
-    public class GameManager : IStartable
+    public class GameManager : MonoBehaviour
     {
         [Inject] private WindowsManager _windowsManager;
-        [Inject] private LocalizationService _localizationService;
+        [Inject] private LevelManager _levelManager;
         
         public void Start()
         {
+            InjectManager.Inject(this);
             Application.targetFrameRate = 120;
             
             // var sequence = DOTween.Sequence();
@@ -21,6 +22,20 @@ namespace _Project.Scripts._GlobalLogic
             // sequence.Append(_windowsManager.ShowWindow<GameWindow>());
             // sequence.Append(_windowsManager.HideWindow<LoadingWindow>());
             _windowsManager.ShowWindow<GameWindow>();
+            _levelManager.LoadLevel();
+        }
+        
+        private void OnApplicationQuit()
+        {
+            _levelManager.SaveLevel();
+        }
+        
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause)
+            {
+                _levelManager.SaveLevel();
+            }
         }
     }
 }

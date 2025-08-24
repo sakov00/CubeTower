@@ -1,3 +1,4 @@
+using _Project.Scripts.Managers;
 using _Project.Scripts.Rendering;
 using UnityEngine;
 
@@ -13,6 +14,26 @@ namespace _Project.Scripts.DraggableObjects
         {
             _gradientImageBg.TopColor = topColor;
             _gradientImageBg.BottomColor = bottomColor;
+        }
+        
+        public new ColoredBoxData GetJsonData()
+        {
+            var baseData = base.GetJsonData();
+            return new ColoredBoxData
+            {
+                TopColor = TopColor,
+                BottomColor = BottomColor,
+                AnchoredPosition = baseData.AnchoredPosition,
+                AnchorMax = baseData.AnchorMax,
+                AnchorMin = baseData.AnchorMin,
+                ParentPath = baseData.ParentPath
+            };
+        }
+
+        public void SetJsonData(ColoredBoxData data)
+        {
+            SetColor(data.TopColor, data.BottomColor);
+            base.SetJsonData(data);
         }
     }
 }

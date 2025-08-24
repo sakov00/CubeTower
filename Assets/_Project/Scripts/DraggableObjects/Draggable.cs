@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using _Project.Scripts._GlobalLogic;
-using _Project.Scripts._VContainer;
+using _Project.Scripts.Helpers;
 using _Project.Scripts.Managers;
-using _Project.Scripts.Windows;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using VContainer;
 
 namespace _Project.Scripts.DraggableObjects
 {
     [RequireComponent(typeof(RectTransform))]
-    public class Draggable : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public abstract class Draggable : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [field: SerializeField] public RectTransform RectTransform { get; private set; }
         
@@ -69,6 +65,24 @@ namespace _Project.Scripts.DraggableObjects
             OnEndedDrag = null;
             OnPointerDowned -= _draggableManager?.OnPointerDowned;
             OnEndedDrag -= _draggableManager?.OnEndedDrag;
+        }
+
+        public virtual DraggableData GetJsonData()
+        {
+            return new DraggableData
+            {
+                AnchoredPosition = RectTransform.anchoredPosition,
+                AnchorMax = RectTransform.anchorMax,
+                AnchorMin = RectTransform.anchorMin,
+                ParentPath = RectTransform.parent?.GetFullPath()
+            };
+        }
+
+        public virtual void SetJsonData(DraggableData data)
+        {
+            RectTransform.anchoredPosition = data.AnchoredPosition;
+            RectTransform.anchorMax = data.AnchorMax;
+            RectTransform.anchorMin = data.AnchorMin;
         }
     }
 }

@@ -4,11 +4,15 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts._GlobalLogic;
+using _Project.Scripts.ObjectPools;
+using VContainer;
 
 namespace _Project.Scripts.DraggableObjects
 {
     public class CustomScrollRect : ScrollRect, IPointerDownHandler
     {
+        [Inject] private DraggablePool _draggablePool;
+        
         private bool _lockScroll;
         private bool _directionChosen;
         private GameObject _currentChildObject;
@@ -28,6 +32,7 @@ namespace _Project.Scripts.DraggableObjects
                 {
                     _lockScroll = true;
                     PassThroughClick(eventData);
+                    DragNewObject(eventData);
                 }
                 _directionChosen = true;
             }
@@ -67,6 +72,18 @@ namespace _Project.Scripts.DraggableObjects
                 return;
             
             _currentChildObject = results[1].gameObject;
+        }
+
+        private void DragNewObject(PointerEventData eventData)
+        {
+            if (_currentChildObject == null) return;
+            var coloredBox = _currentChildObject.GetComponent<ColoredBox>();
+            var newColoredBox = _draggablePool.Get<ColoredBox>(content);
+            newColoredBox.SetColor(coloredBox.TopColor, coloredBox.BottomColor);
+            newColoredBox.RectTransform.anchorMax = new Vector2(0, 1);
+            newColoredBox.RectTransform.anchorMin = new Vector2(0, 1);
+            _currentChildObject = newColoredBox.gameObject;
+            
             ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.pointerDownHandler);
             ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.beginDragHandler);
         }

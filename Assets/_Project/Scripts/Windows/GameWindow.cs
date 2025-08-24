@@ -27,20 +27,20 @@ namespace _Project.Scripts.Windows
         [SerializeField] private Button _switchLanguageButton;
         [SerializeField] private TextMeshProUGUI _switchLanguageText;
         [SerializeField] private RectTransform _scrollContent;
+        [SerializeField] private Transform _draggableContainer;
         
-        [SerializeField] private DraggablePool _draggablePool;
-        
+        [Inject] private DraggablePool _draggablePool;
         [Inject] private DraggableManager _draggableManager;
-        [Inject] private DraggableFactory _draggableFactory;
         [Inject] private LocalizationService _localizationService;
 
         public override void Initialize()
         {
             _lineSpawner.FillBg();
             _starSpawner.FillBg();
-            _draggableManager.OnPointerDowned += CopyCube;
+            _draggableManager.OnPointerDowned += ChangeParent;
             _draggableManager.OnEndedDrag += CubeReplaced;
-            _draggableFactory.CreateAllColoredBoxes(_scrollContent);
+            _draggablePool.SetContainer(_draggableContainer);
+            _draggablePool.CreateAllColoredBoxes(_scrollContent);
             
             _localizationService.CurrentLanguage.Subscribe(_ =>
             {
@@ -50,13 +50,8 @@ namespace _Project.Scripts.Windows
             _switchLanguageButton.onClick.AddListener(SwitchLanguage);
         }
         
-        private void CopyCube(Draggable draggable)
+        private void ChangeParent(Draggable draggable)
         {
-            if (draggable is ColoredBox coloredBox && _scrollContent.transform == draggable.RectTransform.parent)
-            {
-                var newColoredBox = _draggablePool.Get<ColoredBox>(_scrollContent);
-                newColoredBox.SetColor(coloredBox.TopColor, coloredBox.BottomColor);
-            }
             draggable.RectTransform.SetParent(transform);
         }
 
@@ -92,7 +87,7 @@ namespace _Project.Scripts.Windows
         {
             if (_draggableManager != null)
             {
-                _draggableManager.OnPointerDowned -= CopyCube;
+                _draggableManager.OnPointerDowned -= ChangeParent;
                 _draggableManager.OnEndedDrag -= CubeReplaced;
             }
             _switchLanguageButton.onClick.RemoveListener(SwitchLanguage);

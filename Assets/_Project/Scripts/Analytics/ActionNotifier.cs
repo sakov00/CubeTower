@@ -36,7 +36,6 @@ namespace _Project.Scripts.Analytics
             
             OnAction += async action =>
             {
-                _analyticsManager.LogAction(action);
                 await ShowMessageAsync(action);
             };
         }

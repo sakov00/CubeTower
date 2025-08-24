@@ -7,7 +7,7 @@ namespace _Project.Scripts.Zones
     {
         public override void AddDraggableToZone(Draggable draggable)
         {
-            _draggablePool.Return(draggable);
+            DraggablePool.Return(draggable);
             ActionNotifier.PublishAction(GameConstants.LocalizationKeys.BoxThrewOut);
         }
     }

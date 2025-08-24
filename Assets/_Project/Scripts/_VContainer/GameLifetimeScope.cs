@@ -3,6 +3,8 @@ using _Project.Scripts.Analytics;
 using _Project.Scripts.Factories;
 using _Project.Scripts.Localization;
 using _Project.Scripts.Managers;
+using _Project.Scripts.ObjectPools;
+using _Project.Scripts.Registries;
 using _Project.Scripts.SO;
 using UnityEngine;
 using VContainer;
@@ -13,6 +15,7 @@ namespace _Project.Scripts._VContainer
     public class GameLifetimeScope : LifetimeScope
     {
         [SerializeField] private ActionNotifier _actionNotifier;
+        [SerializeField] private GameManager _gameManager;
         [SerializeField] private WindowsManager _windowsManager;
         
         [Header("Configs")]
@@ -23,12 +26,13 @@ namespace _Project.Scripts._VContainer
         {
             builder.RegisterBuildCallback(InjectManager.Initialize);
             
-            builder.Register<GameManager>(Lifetime.Singleton).As<GameManager, IStartable>();
-            
+            builder.RegisterInstance(_gameManager).AsSelf();
             builder.RegisterInstance(_windowsManager).AsSelf().As<IInitializable>();
 
             RegisterServices(builder);
+            RegisterRegistries(builder);
             RegisterFactories(builder);
+            RegisterPools(builder);
             RegisterSO(builder);
         }
 
@@ -38,11 +42,22 @@ namespace _Project.Scripts._VContainer
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf();
             builder.Register<LocalizationService>(Lifetime.Singleton).AsSelf();
             builder.Register<DraggableManager>(Lifetime.Singleton).AsSelf();
+            builder.Register<LevelManager>(Lifetime.Singleton).AsSelf();
+        }
+        
+        private void RegisterRegistries(IContainerBuilder builder)
+        {
+            builder.Register<SaveRegistry>(Lifetime.Singleton).AsSelf();
         }
         
         private void RegisterFactories(IContainerBuilder builder)
         {
             builder.Register<DraggableFactory>(Lifetime.Singleton).AsSelf();
+        }
+        
+        private void RegisterPools(IContainerBuilder builder)
+        {
+            builder.Register<DraggablePool>(Lifetime.Singleton).AsSelf();
         }
         
         private void RegisterSO(IContainerBuilder builder)

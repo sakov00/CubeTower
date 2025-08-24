@@ -14,7 +14,7 @@ namespace _Project.Scripts.Factories
         [Inject] private IObjectResolver _resolver;
         [Inject] private ColoredBoxesConfig _coloredBoxesConfig;
 
-        public List<ColoredBox> CreateAllColoredBoxes(Transform parent)
+        public List<ColoredBox> CreateAllColoredBoxes(Transform parent = null)
         {
             var coloredBoxes = new List<ColoredBox>();
             foreach (var colors in _coloredBoxesConfig.ColoredBoxes)
@@ -26,7 +26,7 @@ namespace _Project.Scripts.Factories
             return coloredBoxes;
         }
         
-        public T CreateDraggable<T>(Transform parent) where T : Draggable
+        public T CreateDraggable<T>(Transform parent = null) where T : Draggable
         {
             Draggable draggable = null;
             foreach (var prefab in _coloredBoxesConfig.ListDraggablePrefabs)

@@ -14,7 +14,7 @@ namespace _Project.Scripts.Helpers
             return rectA.Overlaps(rectB);
         }
 
-        private static Rect GetLocalRectInParent(RectTransform rectTransform, RectTransform parent, float extraRadius)
+        public static Rect GetLocalRectInParent(RectTransform rectTransform, RectTransform parent, float extraRadius)
         {
             var corners = new Vector3[4];
             rectTransform.GetWorldCorners(corners);
@@ -33,6 +33,18 @@ namespace _Project.Scripts.Helpers
             rect.yMax += extraRadius;
 
             return rect;
+        }
+        
+        public static string GetFullPath(this Transform transform)
+        {
+            if (transform == null) return null;
+            string path = transform.name;
+            while (transform.parent != null)
+            {
+                transform = transform.parent;
+                path = transform.name + "/" + path;
+            }
+            return path;
         }
     }
 }

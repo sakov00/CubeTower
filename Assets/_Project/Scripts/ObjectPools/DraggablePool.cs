@@ -1,24 +1,30 @@
 using System.Collections.Generic;
 using System.Linq;
-using _Project.Scripts._VContainer;
 using _Project.Scripts.DraggableObjects;
 using _Project.Scripts.Factories;
-using _Project.Scripts.Managers;
-using _Project.Scripts.Windows;
+using _Project.Scripts.Registries;
 using UnityEngine;
 using VContainer;
 
 namespace _Project.Scripts.ObjectPools
 {
-    public class DraggablePool : MonoBehaviour
+    public class DraggablePool
     {
         [Inject] private DraggableFactory _draggableFactory;
+        [Inject] private SaveRegistry _saveRegistry;
+        
+        private Transform _containerTransform;
         
         private readonly List<Draggable> _availableDraggables = new();
 
-        private void Awake()
+        public void SetContainer(Transform transform)
         {
-            InjectManager.Inject(this);
+            _containerTransform = transform;
+        }
+
+        public List<ColoredBox> CreateAllColoredBoxes(Transform parent)
+        {
+            return _draggableFactory.CreateAllColoredBoxes(parent);
         }
         
         public T Get<T>(Transform parent) where T : Draggable
@@ -36,18 +42,20 @@ namespace _Project.Scripts.ObjectPools
             }
             
             draggable.transform.SetParent(parent, false);
-            return (T)draggable;
+            _saveRegistry.Register<T>(draggable);
+            return draggable;
         }
 
-        public void Return(Draggable box)
+        public void Return<T>(T draggable) where T : Draggable
         {
-            if (!_availableDraggables.Contains(box))
+            if (!_availableDraggables.Contains(draggable))
             {
-                _availableDraggables.Add(box);
+                _availableDraggables.Add(draggable);
             }
             
-            box.gameObject.SetActive(false);
-            box.transform.SetParent(transform, false); 
+            draggable.gameObject.SetActive(false);
+            draggable.transform.SetParent(_containerTransform, false); 
+            _saveRegistry.Unregister<T>(draggable);
         }
     }
 }

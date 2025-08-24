@@ -12,9 +12,9 @@ namespace _Project.Scripts.Zones
 {
     public abstract class BaseZone : MonoBehaviour
     {
-        [SerializeField] protected DraggablePool _draggablePool;
         [field: SerializeField] public RectTransform RectTransform { get; private set; }
         
+        [Inject] protected DraggablePool DraggablePool;
         [Inject] protected ActionNotifier ActionNotifier;
 
         private void OnValidate()
