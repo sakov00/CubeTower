@@ -8,7 +8,7 @@ namespace _Project.Scripts.SO
     [CreateAssetMenu(fileName = "ColoredBoxesConfig", menuName = "SO/Colored Boxes Config")]
     public class ColoredBoxesConfig : ScriptableObject
     {
-        [field:SerializeField] public ColoredBox BoxPrefab { get; set; }
+        [field:SerializeField] public List<Draggable> ListDraggablePrefabs { get; set; }
         [field:SerializeField] public List<ColorsConfig> ColoredBoxes { get; set; } = new();
     }
     

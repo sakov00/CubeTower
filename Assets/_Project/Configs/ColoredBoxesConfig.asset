@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eb61f35342647c3842c330ecf4973fa, type: 3}
   m_Name: ColoredBoxesConfig
   m_EditorClassIdentifier: 
-  <BoxPrefab>k__BackingField: {fileID: 1971282680319850063, guid: c9c9eb6f5cae4e4408a51ac0e2b6ecc5, type: 3}
+  <ListDraggablePrefabs>k__BackingField:
+  - {fileID: 1971282680319850063, guid: c9c9eb6f5cae4e4408a51ac0e2b6ecc5, type: 3}
   <ColoredBoxes>k__BackingField:
   - <TopColor>k__BackingField: {r: 0.7372549, g: 0.10980392, b: 0.21176471, a: 1}
     <BottomColor>k__BackingField: {r: 0.44313726, g: 0, b: 0.07058824, a: 1}

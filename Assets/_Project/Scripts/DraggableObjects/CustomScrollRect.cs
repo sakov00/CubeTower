@@ -60,8 +60,12 @@ namespace _Project.Scripts.DraggableObjects
         
         private void PassThroughClick(PointerEventData eventData)
         {
-            List<RaycastResult> results = new List<RaycastResult>();
+            var results = new List<RaycastResult>();
             GlobalObjects.EventSystem.RaycastAll(eventData, results);
+            
+            if (results.Count < 2) 
+                return;
+            
             _currentChildObject = results[1].gameObject;
             ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.pointerDownHandler);
             ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.beginDragHandler);

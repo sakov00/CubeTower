@@ -1,0 +1,7 @@
+[
+  { "Id": "switch_lang", "En": "Switch language", "Ru": "Изменить язык" },
+  { "Id": "box_installed", "En": "Box installed!", "Ru": "Кубик установлен!" },
+  { "Id": "box_threw_out", "En": "Box threw out!", "Ru": "Кубик выкинут!" },
+  { "Id": "box_missed", "En": "Box missed!", "Ru": "Кубик пропал!" },
+  { "Id": "maximum_altitude_exceeded", "En": "Maximum altitude exceeded!", "Ru": "Превышена максимальная высота!" }
+]

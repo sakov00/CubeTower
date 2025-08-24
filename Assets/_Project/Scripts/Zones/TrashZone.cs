@@ -1,3 +1,4 @@
+using _Project.Scripts._GlobalLogic;
 using _Project.Scripts.DraggableObjects;
 
 namespace _Project.Scripts.Zones
@@ -6,8 +7,8 @@ namespace _Project.Scripts.Zones
     {
         public override void AddDraggableToZone(Draggable draggable)
         {
-            if(draggable is ColoredBox coloredBox)
-                _coloredBoxesPool.Return(coloredBox);
+            _draggablePool.Return(draggable);
+            ActionNotifier.PublishAction(GameConstants.LocalizationKeys.BoxThrewOut);
         }
     }
 }

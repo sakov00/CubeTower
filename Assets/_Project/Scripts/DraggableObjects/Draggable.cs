@@ -16,7 +16,6 @@ namespace _Project.Scripts.DraggableObjects
     public class Draggable : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [field: SerializeField] public RectTransform RectTransform { get; private set; }
-        [SerializeField] private BaseWindow _parentWindow;
         
         [Inject] private DraggableManager _draggableManager;
 
@@ -31,9 +30,8 @@ namespace _Project.Scripts.DraggableObjects
             RectTransform ??= GetComponent<RectTransform>();
         }
 
-        public void Initialize(BaseWindow parentWindow)
+        public void Initialize()
         {
-            _parentWindow = parentWindow;
             OnPointerDowned += _draggableManager.OnPointerDowned;
             OnEndedDrag += _draggableManager.OnEndedDrag;
         }
@@ -42,14 +40,12 @@ namespace _Project.Scripts.DraggableObjects
         {
             OnPointerDowned?.Invoke(this);
             _isDragging = false;
-            RectTransform.SetParent(_parentWindow.transform);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             _offset = Vector3.zero;
             _isDragging = true;
-            
         }
 
         public void OnDrag(PointerEventData eventData)

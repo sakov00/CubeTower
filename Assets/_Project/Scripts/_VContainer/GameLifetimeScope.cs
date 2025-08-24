@@ -1,5 +1,7 @@
 using _Project.Scripts._GlobalLogic;
+using _Project.Scripts.Analytics;
 using _Project.Scripts.Factories;
+using _Project.Scripts.Localization;
 using _Project.Scripts.Managers;
 using _Project.Scripts.SO;
 using UnityEngine;
@@ -10,6 +12,7 @@ namespace _Project.Scripts._VContainer
 {
     public class GameLifetimeScope : LifetimeScope
     {
+        [SerializeField] private ActionNotifier _actionNotifier;
         [SerializeField] private WindowsManager _windowsManager;
         
         [Header("Configs")]
@@ -31,12 +34,15 @@ namespace _Project.Scripts._VContainer
 
         private void RegisterServices(IContainerBuilder builder)
         {
+            builder.RegisterInstance(_actionNotifier).AsSelf().As<IInitializable>();
+            builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf();
+            builder.Register<LocalizationService>(Lifetime.Singleton).AsSelf();
             builder.Register<DraggableManager>(Lifetime.Singleton).AsSelf();
         }
         
         private void RegisterFactories(IContainerBuilder builder)
         {
-            builder.Register<ColoredBoxesFactory>(Lifetime.Singleton).AsSelf();
+            builder.Register<DraggableFactory>(Lifetime.Singleton).AsSelf();
         }
         
         private void RegisterSO(IContainerBuilder builder)

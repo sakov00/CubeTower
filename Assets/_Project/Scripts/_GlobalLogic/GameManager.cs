@@ -1,5 +1,5 @@
+using _Project.Scripts.Localization;
 using _Project.Scripts.Windows;
-using DG.Tweening;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -9,6 +9,7 @@ namespace _Project.Scripts._GlobalLogic
     public class GameManager : IStartable
     {
         [Inject] private WindowsManager _windowsManager;
+        [Inject] private LocalizationService _localizationService;
         
         public void Start()
         {
