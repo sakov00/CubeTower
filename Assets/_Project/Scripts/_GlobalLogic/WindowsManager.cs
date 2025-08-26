@@ -38,7 +38,6 @@ namespace _Project.Scripts._GlobalLogic
             if (!_cachedWindows.TryGetValue(typeof(T), out var window))
             {
                 window = _resolver.Instantiate(_windowsConfig.Windows[typeof(T)], parent: GetParent(windowType));
-                window.Initialize();
                 _cachedWindows.Add(typeof(T), window);
             }
 

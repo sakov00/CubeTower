@@ -9,7 +9,7 @@ using VContainer;
 
 namespace _Project.Scripts.DraggableObjects
 {
-    public class CustomScrollRect : ScrollRect, IPointerDownHandler
+    public class CustomScrollRect : ScrollRect, IPointerDownHandler, IPointerUpHandler
     {
         [Inject] private DraggablePool _draggablePool;
         
@@ -63,6 +63,11 @@ namespace _Project.Scripts.DraggableObjects
             base.OnEndDrag(eventData);
         }
         
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            ExecuteEvents.Execute(_currentChildObject, eventData, ExecuteEvents.pointerUpHandler);
+        }
+        
         private void PassThroughClick(PointerEventData eventData)
         {
             var results = new List<RaycastResult>();
@@ -78,7 +83,10 @@ namespace _Project.Scripts.DraggableObjects
         {
             if (_currentChildObject == null) return;
             var coloredBox = _currentChildObject.GetComponent<ColoredBox>();
+            
+            if(coloredBox == null) return;
             var newColoredBox = _draggablePool.Get<ColoredBox>(content);
+
             newColoredBox.SetColor(coloredBox.TopColor, coloredBox.BottomColor);
             newColoredBox.RectTransform.anchorMax = new Vector2(0, 1);
             newColoredBox.RectTransform.anchorMin = new Vector2(0, 1);

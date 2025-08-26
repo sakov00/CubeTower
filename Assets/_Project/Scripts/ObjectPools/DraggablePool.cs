@@ -3,6 +3,7 @@ using System.Linq;
 using _Project.Scripts.DraggableObjects;
 using _Project.Scripts.Factories;
 using _Project.Scripts.Registries;
+using DG.Tweening;
 using UnityEngine;
 using VContainer;
 
@@ -40,7 +41,9 @@ namespace _Project.Scripts.ObjectPools
             {
                 draggable = _draggableFactory.CreateDraggable<T>(parent);
             }
-            
+
+            draggable.CanvasGroup.DOKill();
+            draggable.CanvasGroup.alpha = 1f;
             draggable.transform.SetParent(parent, false);
             _saveRegistry.Register<T>(draggable);
             return draggable;

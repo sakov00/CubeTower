@@ -1,16 +1,15 @@
 using System;
-using _Project.Scripts.DraggableObjects;
 
-namespace _Project.Scripts.Managers
+namespace _Project.Scripts.DraggableObjects
 {
     public class DraggableManager : IDisposable
     {
-        public Action<Draggable> OnPointerDowned;
+        public Action<Draggable> OnBeginedDrag;
         public Action<Draggable> OnEndedDrag;
 
         public void Dispose()
         {
-            OnPointerDowned = null;
+            OnBeginedDrag = null;
             OnEndedDrag = null;
         }
     }

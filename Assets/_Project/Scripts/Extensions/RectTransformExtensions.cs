@@ -1,20 +1,20 @@
 using UnityEngine;
 
-namespace _Project.Scripts.Helpers
+namespace _Project.Scripts.Extensions
 {
-    public static class RectTransformHelper
+    public static class RectTransformExtensions
     {
-        public static bool IsOverlappingAnchored(this RectTransform a, RectTransform b, float extraRadius = 0f)
+        public static bool IsOverlappingAnchored(this RectTransform a, RectTransform b,
+            float offsetX = 0, float offsetY = 0, float extraRadius = 0f)
         {
             var commonParent = a.root as RectTransform;
-
-            Rect rectA = GetLocalRectInParent(a, commonParent, extraRadius);
-            Rect rectB = GetLocalRectInParent(b, commonParent, extraRadius);
-
+            var rectA = GetLocalRectInParent(a, commonParent, extraRadius);
+            var rectB = GetLocalRectInParent(b, commonParent, offsetX, offsetY, extraRadius);
             return rectA.Overlaps(rectB);
         }
 
-        public static Rect GetLocalRectInParent(RectTransform rectTransform, RectTransform parent, float extraRadius)
+        public static Rect GetLocalRectInParent(RectTransform rectTransform, RectTransform parent,
+            float offsetX = 0, float offsetY = 0, float extraRadius = 0)
         {
             var corners = new Vector3[4];
             rectTransform.GetWorldCorners(corners);
@@ -22,10 +22,13 @@ namespace _Project.Scripts.Helpers
             for (int i = 0; i < 4; i++)
                 corners[i] = parent.InverseTransformPoint(corners[i]);
 
-            Vector3 bottomLeft = corners[0];
-            Vector3 topRight   = corners[2];
+            var bottomLeft = corners[0];
+            var topRight   = corners[2];
 
-            Rect rect = new Rect(bottomLeft, topRight - bottomLeft);
+            var rect = new Rect(bottomLeft, topRight - bottomLeft);
+
+            rect.x += offsetX;
+            rect.y += offsetY;
 
             rect.xMin -= extraRadius;
             rect.yMin -= extraRadius;

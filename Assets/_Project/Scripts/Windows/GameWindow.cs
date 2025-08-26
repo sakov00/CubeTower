@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Project.Scripts._GlobalLogic;
 using _Project.Scripts.DraggableObjects;
 using _Project.Scripts.Factories;
-using _Project.Scripts.Localization;
-using _Project.Scripts.Managers;
+using _Project.Scripts.FileDatas;
 using _Project.Scripts.ObjectPools;
+using _Project.Scripts.Registries;
 using _Project.Scripts.Rendering;
 using _Project.Scripts.Zones;
 using Cysharp.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace _Project.Scripts.Windows
         [SerializeField] private Transform _draggableContainer;
         
         [Inject] private DraggablePool _draggablePool;
+        [Inject] private SaveRegistry _saveRegistry;
         [Inject] private DraggableManager _draggableManager;
         [Inject] private LocalizationService _localizationService;
 
@@ -37,10 +39,11 @@ namespace _Project.Scripts.Windows
         {
             _lineSpawner.FillBg();
             _starSpawner.FillBg();
-            _draggableManager.OnPointerDowned += ChangeParent;
+            _draggableManager.OnBeginedDrag += ChangeParent;
             _draggableManager.OnEndedDrag += CubeReplaced;
             _draggablePool.SetContainer(_draggableContainer);
             _draggablePool.CreateAllColoredBoxes(_scrollContent);
+            _zones.ForEach(x => x.Initialize());
             
             _localizationService.CurrentLanguage.Subscribe(_ =>
             {
@@ -49,10 +52,21 @@ namespace _Project.Scripts.Windows
             
             _switchLanguageButton.onClick.AddListener(SwitchLanguage);
         }
+
+        public void RestoreDataZones()
+        {
+            var savedBoxes = _saveRegistry.GetAll<ColoredBox>().ToList();
+            foreach (var coloredBox in savedBoxes.Where(coloredBox => coloredBox.RectTransform.parent == _draggableContainer))
+                _draggablePool.Return(coloredBox);
+            
+            _zones.ForEach(x => x.RestoreData());
+        }
         
         private void ChangeParent(Draggable draggable)
         {
-            draggable.RectTransform.SetParent(transform);
+            var worldPos = draggable.RectTransform.position;
+            draggable.RectTransform.SetParent(transform, true);
+            draggable.RectTransform.position = worldPos;
         }
 
         private void CubeReplaced(Draggable draggable)
@@ -87,7 +101,7 @@ namespace _Project.Scripts.Windows
         {
             if (_draggableManager != null)
             {
-                _draggableManager.OnPointerDowned -= ChangeParent;
+                _draggableManager.OnBeginedDrag -= ChangeParent;
                 _draggableManager.OnEndedDrag -= CubeReplaced;
             }
             _switchLanguageButton.onClick.RemoveListener(SwitchLanguage);

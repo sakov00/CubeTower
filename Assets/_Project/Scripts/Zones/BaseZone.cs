@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
 using _Project.Scripts._VContainer;
 using _Project.Scripts.Analytics;
 using _Project.Scripts.DraggableObjects;
-using _Project.Scripts.Managers;
 using _Project.Scripts.ObjectPools;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 
@@ -22,12 +20,13 @@ namespace _Project.Scripts.Zones
             RectTransform ??= GetComponent<RectTransform>();
         }
 
-        protected virtual void Awake()
+        public virtual void Initialize()
         {
             InjectManager.Inject(this);
         }
-
-        public abstract void AddDraggableToZone(Draggable draggable);
+        
+        public virtual void RestoreData() { }
+        public abstract UniTask AddDraggableToZone<T>(T draggable) where T : Draggable;
         public virtual void RemoveDraggableFromZone(Draggable draggable) { }
     }
 }

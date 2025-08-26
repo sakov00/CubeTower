@@ -36,5 +36,15 @@ namespace _Project.Scripts.Windows
             sequence.Append(_canvasGroup.DOFade(0f, 0.5f).From(1));
             return sequence;
         }
+        
+        public virtual void ShowFast()
+        {
+            _canvasGroup.alpha = 1f;
+        }
+
+        public virtual void HideFast()
+        {
+            _canvasGroup.alpha = 0;
+        }
     }
 }

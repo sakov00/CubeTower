@@ -4,10 +4,11 @@ using System.IO;
 using _Project.Scripts.DraggableObjects;
 using _Project.Scripts.Factories;
 using _Project.Scripts.Registries;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 
-namespace _Project.Scripts.Managers
+namespace _Project.Scripts.FileDatas
 {
     public class LevelManager
     {
@@ -16,7 +17,7 @@ namespace _Project.Scripts.Managers
 
         private string SavePath => Path.Combine(Application.persistentDataPath, "progress.json");
 
-        public void SaveLevel()
+        public async UniTask SaveLevel()
         {
             var data = new LevelData();
 
@@ -26,33 +27,30 @@ namespace _Project.Scripts.Managers
             }
 
             var json = JsonUtility.ToJson(data, true);
-            File.WriteAllText(SavePath, json);
+            await File.WriteAllTextAsync(SavePath, json);
         }
 
-        public void LoadLevel()
+        public async UniTask LoadLevel()
         {
             if (!File.Exists(SavePath))
                 return;
 
-            var json = File.ReadAllText(SavePath);
+            var json = await File.ReadAllTextAsync(SavePath);
             var data = JsonUtility.FromJson<LevelData>(json);
 
             foreach (var draggableObj in data.Objects)
             {
-                if (draggableObj.GetType() == typeof(ColoredBoxData))
+                if (draggableObj.GetType() == typeof(ColoredBoxData) && !string.IsNullOrEmpty(draggableObj.ParentPath))
                 {
-                    if (!string.IsNullOrEmpty(draggableObj.ParentPath))
+                    var parent = GameObject.Find(draggableObj.ParentPath)?.transform;
+                    if (parent != null)
                     {
-                        var parent = GameObject.Find(draggableObj.ParentPath)?.transform;
-                        if (parent != null)
-                        {
-                            var coloredBox = _draggableFactory.CreateDraggable<ColoredBox>(parent);
-                            coloredBox.SetJsonData(draggableObj);
-                        }
+                        var coloredBox = _draggableFactory.CreateDraggable<ColoredBox>(parent);
+                        coloredBox.SetJsonData(draggableObj);
+                        coloredBox.RealPos = coloredBox.RectTransform.anchoredPosition;
+                        _saveRegistry.Register(coloredBox);
                     }
-
                 }
-
             }
         }
     }

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Project.Scripts._GlobalLogic;
 using _Project.Scripts._VContainer;
 using _Project.Scripts.DraggableObjects;
-using _Project.Scripts.Helpers;
-using _Project.Scripts.Managers;
+using _Project.Scripts.Extensions;
+using _Project.Scripts.Registries;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using VContainer;
@@ -17,84 +19,105 @@ namespace _Project.Scripts.Zones
         [SerializeField] private float _percentOffsetBox = 0.5f;
         [SerializeField] private float _extraRadius = 50f;
         
+        [Inject] private SaveRegistry _saveRegistry;
         [Inject] private DraggableManager _draggableManager;
 
-        protected override void Awake()
+        public override void Initialize()
         {
-            base.Awake();
-            _draggableManager.OnPointerDowned += RemoveDraggableFromZone;
+            base.Initialize();
+            _draggableManager.OnBeginedDrag += RemoveDraggableFromZone;
         }
 
-        public override void AddDraggableToZone(Draggable draggable)
+        public override void RestoreData()
         {
-            if (CheckHitToTower(draggable) || _towerObjects.Count == 0)
+            _towerObjects.Clear();
+
+            if (transform.childCount <= 0) 
+                return;
+            
+            foreach (var coloredBox in _saveRegistry.GetAll<ColoredBox>())
+            {
+                if (coloredBox.RectTransform.parent == transform)
+                {
+                    _towerObjects.Add(coloredBox);
+                }
+            }
+            _towerObjects.Sort((a, b) =>
+                a.RectTransform.anchoredPosition.y.CompareTo(b.RectTransform.anchoredPosition.y));
+        }
+
+        public override async UniTask AddDraggableToZone<T>(T draggable)
+        {
+            if (CheckHitToNextPos(draggable) || _towerObjects.Count == 0)
             {
                 UpdateRectTransform(draggable.RectTransform);
-                SetPosition(draggable);
+                SetPosition(draggable).Forget();
             }
             else
             {
+                await draggable.Hide();
                 DraggablePool.Return(draggable);
                 ActionNotifier.PublishAction(GameConstants.LocalizationKeys.BoxMissed);
             }
         }
 
-        private bool CheckHitToTower(Draggable draggable)
+        private bool CheckHitToNextPos(Draggable draggable)
         {
-            foreach (var towerObject in _towerObjects)
-            {
-                if (towerObject.RectTransform.IsOverlappingAnchored(draggable.RectTransform, _extraRadius))
-                {
-                    return true;
-                }
-            }
-            return false;
+            var last = _towerObjects.LastOrDefault();
+            if(last == null)
+                return false;
+
+            return draggable.RectTransform.IsOverlappingAnchored(last.RectTransform, 0,
+                draggable.RectTransform.rect.height, _extraRadius);
         }
 
         private void UpdateRectTransform(RectTransform rectTransform)
         {
-            rectTransform.SetParent(transform);
+            Vector3 worldPos = rectTransform.position;
+            rectTransform.DOKill();
+            rectTransform.SetParent(transform, worldPositionStays: true);
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.zero;
-            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            rectTransform.position = worldPos;
         }
 
-        private void SetPosition(Draggable draggable)
+        private async UniTask SetPosition(Draggable draggable)
         {
             var zoneLeft = draggable.RectTransform.rect.width / 2;
             var zoneRight = RectTransform.rect.width - draggable.RectTransform.rect.width / 2;
-            
+
             if (_towerObjects.Count == 0)
             {
                 var newX = Mathf.Clamp(draggable.RectTransform.anchoredPosition.x, zoneLeft, zoneRight);
-                draggable.RectTransform.anchoredPosition = new Vector2(newX, draggable.RectTransform.rect.height * 0.5f);
+                var newY = draggable.RectTransform.rect.height * 0.5f;
+                draggable.RealPos = new Vector2(newX, newY);
             }
             else
             {
                 var last = _towerObjects[^1];
-                var newY = last.RectTransform.anchoredPosition.y + last.RectTransform.rect.height;
-                
+                var newY = last.RealPos.y + last.RectTransform.rect.height;
+
                 var zoneHeight = RectTransform.rect.height;
-                if (newY > zoneHeight && draggable is ColoredBox coloredBox)
+                if (newY > zoneHeight)
                 {
-                    DraggablePool.Return(coloredBox);
+                    await draggable.Hide();
+                    DraggablePool.Return((ColoredBox)draggable);
                     ActionNotifier.PublishAction(GameConstants.LocalizationKeys.MaximumAltitudeExceeded);
                     return;
                 }
 
                 var halfWidth = draggable.RectTransform.rect.width * _percentOffsetBox;
                 var randomXOffset = Random.Range(-halfWidth, halfWidth);
-                var newX = Mathf.Clamp(last.RectTransform.anchoredPosition.x + randomXOffset, 
-                    zoneLeft, zoneRight);
-                
-                draggable.RectTransform.anchoredPosition = new Vector2(newX, newY);
+                var newX = Mathf.Clamp(last.RectTransform.anchoredPosition.x + randomXOffset, zoneLeft, zoneRight);
 
-                draggable.RectTransform.DOAnchorPosY(newY + 30f, 0.2f)
-                    .OnComplete(() =>
-                        draggable.RectTransform.DOAnchorPosY(newY, 0.2f)
-                    );
+                draggable.RealPos = new Vector2(newX, newY);
             }
             
+            draggable.RectTransform.DOKill();
+            draggable.RectTransform.DOJumpAnchorPos(draggable.RealPos, 100f, 1, 0.5f)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() => draggable.RectTransform.anchoredPosition = draggable.RealPos);
+
             _towerObjects.Add(draggable);
             ActionNotifier.PublishAction(GameConstants.LocalizationKeys.BoxInstalled);
         }
@@ -103,13 +126,16 @@ namespace _Project.Scripts.Zones
         {
             var index = _towerObjects.IndexOf(draggable);
             if (index == -1) return;
-            
+
             _towerObjects.RemoveAt(index);
-            
+
             for (var i = index; i < _towerObjects.Count; i++)
             {
-                var newY = _towerObjects[i].RectTransform.anchoredPosition.y - draggable.RectTransform.rect.height;
-                _towerObjects[i].RectTransform.DOAnchorPosY(newY, 0.2f);
+                _towerObjects[i].RectTransform.DOKill();
+                var newY = _towerObjects[i].RealPos.y - draggable.RectTransform.rect.height;
+                _towerObjects[i].RealPos = new Vector2(_towerObjects[i].RealPos.x, newY);
+                _towerObjects[i].RectTransform.DOAnchorPosY(newY, 0.2f)
+                    .SetEase(Ease.OutQuad);
             }
         }
 
@@ -117,7 +143,7 @@ namespace _Project.Scripts.Zones
         {
             if (_draggableManager != null)
             {
-                _draggableManager.OnPointerDowned -= RemoveDraggableFromZone;
+                _draggableManager.OnBeginedDrag -= RemoveDraggableFromZone;
             }
         }
     }

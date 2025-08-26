@@ -1,7 +1,8 @@
 using System;
 using _Project.Scripts._GlobalLogic;
-using _Project.Scripts.Helpers;
-using _Project.Scripts.Managers;
+using _Project.Scripts.Extensions;
+using _Project.Scripts.FileDatas;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using VContainer;
@@ -9,47 +10,71 @@ using VContainer;
 namespace _Project.Scripts.DraggableObjects
 {
     [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(CanvasGroup))]
     public abstract class Draggable : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [field: SerializeField] public RectTransform RectTransform { get; private set; }
+        [field: SerializeField] public CanvasGroup CanvasGroup { get; set; }
+        [field: NonSerialized] public Vector3 RealPos { get; set; }
         
         [Inject] private DraggableManager _draggableManager;
 
-        private Vector3 _offset;
+        private readonly Vector3 _offset = new (0, 200, 0);
         private bool _isDragging;
         
-        private event Action<Draggable> OnPointerDowned;
+        private event Action<Draggable> OnBeginedDrag;
         private event Action<Draggable> OnEndedDrag;
 
         private void OnValidate()
         {
             RectTransform ??= GetComponent<RectTransform>();
+            CanvasGroup ??= GetComponent<CanvasGroup>();
         }
 
         public void Initialize()
         {
-            OnPointerDowned += _draggableManager.OnPointerDowned;
+            OnBeginedDrag += _draggableManager.OnBeginedDrag;
             OnEndedDrag += _draggableManager.OnEndedDrag;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            OnPointerDowned?.Invoke(this);
+            RectTransform.DOKill();
             _isDragging = false;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            _offset = Vector3.zero;
+            RectTransform.DOKill();
             _isDragging = true;
+
+            UpdatePosition(eventData);
+            OnBeginedDrag?.Invoke(this);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
+            UpdatePosition(eventData);
+        }
+        
+        private void UpdatePosition(PointerEventData eventData)
+        {
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
                     RectTransform, eventData.position, GlobalObjects.Camera, out var worldPoint))
             {
-                RectTransform.position = worldPoint + _offset;
+                Vector3 worldOffset = RectTransform.TransformVector(_offset);
+                var pos = worldPoint + worldOffset;
+
+                var halfWidth = RectTransform.rect.width * 0.5f * RectTransform.lossyScale.x;
+                var halfHeight = RectTransform.rect.height * 0.5f * RectTransform.lossyScale.y;
+
+                var min = GlobalObjects.Camera.ScreenToWorldPoint(new Vector3(0, 0, GlobalObjects.Camera.nearClipPlane));
+                var max = GlobalObjects.Camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, GlobalObjects.Camera.nearClipPlane));
+
+                pos.x = Mathf.Clamp(pos.x, min.x + halfWidth, max.x - halfWidth);
+                pos.y = Mathf.Clamp(pos.y, min.y + halfHeight, max.y - halfHeight);
+
+                RectTransform.position = pos;
             }
         }
 
@@ -59,14 +84,11 @@ namespace _Project.Scripts.DraggableObjects
             OnEndedDrag?.Invoke(this);
         }
 
-        private void OnDestroy()
+        public Tween Hide()
         {
-            OnPointerDowned = null;
-            OnEndedDrag = null;
-            OnPointerDowned -= _draggableManager?.OnPointerDowned;
-            OnEndedDrag -= _draggableManager?.OnEndedDrag;
+            return CanvasGroup.DOFade(0f, 0.5f);
         }
-
+        
         public virtual DraggableData GetJsonData()
         {
             return new DraggableData
@@ -83,6 +105,14 @@ namespace _Project.Scripts.DraggableObjects
             RectTransform.anchoredPosition = data.AnchoredPosition;
             RectTransform.anchorMax = data.AnchorMax;
             RectTransform.anchorMin = data.AnchorMin;
+        }
+
+        private void OnDestroy()
+        {
+            OnBeginedDrag = null;
+            OnEndedDrag = null;
+            OnBeginedDrag -= _draggableManager?.OnBeginedDrag;
+            OnEndedDrag -= _draggableManager?.OnEndedDrag;
         }
     }
 }

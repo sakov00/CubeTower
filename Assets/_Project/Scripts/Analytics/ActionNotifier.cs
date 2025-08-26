@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using _Project.Scripts._VContainer;
-using _Project.Scripts.Localization;
+using _Project.Scripts.FileDatas;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UniRx;
