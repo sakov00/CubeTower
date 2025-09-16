@@ -15,7 +15,6 @@ namespace _Project.Scripts._VContainer
     public class GameLifetimeScope : LifetimeScope
     {
         [SerializeField] private ActionNotifier _actionNotifier;
-        [SerializeField] private GameManager _gameManager;
         [SerializeField] private WindowsManager _windowsManager;
         
         [Header("Configs")]
@@ -26,7 +25,7 @@ namespace _Project.Scripts._VContainer
         {
             builder.RegisterBuildCallback(InjectManager.Initialize);
             
-            builder.RegisterInstance(_gameManager).AsSelf();
+            builder.Register<GameManager>(Lifetime.Singleton).AsSelf().As<IAsyncStartable>();
             builder.RegisterInstance(_windowsManager).AsSelf().As<IInitializable>();
 
             RegisterServices(builder);

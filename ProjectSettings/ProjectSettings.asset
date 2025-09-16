@@ -761,7 +761,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: DOTWEEN;UNITASK_DOTWEEN_SUPPORT
+    Android: DOTWEEN;UNITASK_DOTWEEN_SUPPORT;VCONTAINER_UNITASK_INTEGRATION
     EmbeddedLinux: DOTWEEN
     GameCoreScarlett: DOTWEEN
     GameCoreXboxOne: DOTWEEN
@@ -771,12 +771,12 @@ PlayerSettings:
     PS5: DOTWEEN
     QNX: DOTWEEN
     Stadia: DOTWEEN
-    Standalone: DOTWEEN;UNITASK_DOTWEEN_SUPPORT
+    Standalone: DOTWEEN;UNITASK_DOTWEEN_SUPPORT;VCONTAINER_UNITASK_INTEGRATION
     VisionOS: DOTWEEN
     WebGL: DOTWEEN
     Windows Store Apps: DOTWEEN
     XboxOne: DOTWEEN
-    iPhone: DOTWEEN;UNITASK_DOTWEEN_SUPPORT
+    iPhone: DOTWEEN;UNITASK_DOTWEEN_SUPPORT;VCONTAINER_UNITASK_INTEGRATION
     tvOS: DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}

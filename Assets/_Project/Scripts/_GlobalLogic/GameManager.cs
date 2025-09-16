@@ -1,22 +1,23 @@
+using System.Threading;
 using _Project.Scripts._VContainer;
 using _Project.Scripts.FileDatas;
 using _Project.Scripts.ObjectPools;
 using _Project.Scripts.Windows;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 using VContainer;
+using VContainer.Unity;
 
 namespace _Project.Scripts._GlobalLogic
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : IAsyncStartable
     {
         [Inject] private WindowsManager _windowsManager;
         [Inject] private LocalizationService _localizationService;
         [Inject] private LevelManager _levelManager;
         [Inject] private DraggablePool _draggablePool;
         
-        public async void Start()
+        public async UniTask StartAsync(CancellationToken cancellation = default)
         {
             InjectManager.Inject(this);
             
